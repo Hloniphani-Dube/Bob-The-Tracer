@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+
+/* Registering these under @theme (Tailwind v4's CSS based config) generates
+   matching utilities: font-hand, font-body, bg-verdict-supported, etc. */
+@theme {
+  --font-hand: 'Architects Daughter', cursive;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --color-ink: #111111;
+  --color-paper: #ffffff;
+  --color-paper-dim: #f7f7f5;
+  --color-pencil: #6b6b6b;
+  --color-line: #cfcfcf;
+
+  --color-verdict-supported: #2f9e44;
+  --color-verdict-partial: #e0a800;
+  --color-verdict-misleading: #e8590c;
+  --color-verdict-contradicted: #c92a2a;
+  --color-verdict-insufficient: #868e96;
+}
+
+/* Plain custom properties too, for the plumbing (roughjs, inline styles)
+   that reads CSS variables directly instead of through a Tailwind class. */
+:root {
+  --ink: #111111;
+  --paper: #ffffff;
+  --paper-dim: #f7f7f5;
+  --pencil: #6b6b6b;
+  --line: #cfcfcf;
+
+  --verdict-supported: #2f9e44;
+  --verdict-partial: #e0a800;
+  --verdict-misleading: #e8590c;
+  --verdict-contradicted: #c92a2a;
+  --verdict-insufficient: #868e96;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Shared hand drawn feel: a couple of degrees of rotation reads as a sketch,
+   more than that reads as broken layout. */
+.sketch-tilt {
+  transform: rotate(-0.4deg);
+}
+.sketch-tilt-alt {
+  transform: rotate(0.5deg);
+}
