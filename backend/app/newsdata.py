@@ -4,6 +4,14 @@ import httpx
 
 LATEST_URL = "https://newsdata.io/api/1/latest"
 
+# Matches the outlet mix chosen in newsdata.io's own Query Builder: South
+# Africa, the United States, the United Kingdom, and China, in the languages
+# TRACE can read, kept to the story categories worth fact checking, and
+# image=1 so every card in the feed has something to show.
+COUNTRIES = "za,us,gb,cn"
+LANGUAGES = "en,zu,af,zh"
+CATEGORIES = "breaking,crime,environment,politics,technology"
+
 
 async def fetch_latest() -> list[dict]:
     """One call here costs one newsdata.io credit and returns up to ten
@@ -12,8 +20,16 @@ async def fetch_latest() -> list[dict]:
     if not api_key:
         raise RuntimeError("NEWSDATA_API_KEY is not set in backend/.env")
 
+    params = {
+        "apikey": api_key,
+        "country": COUNTRIES,
+        "language": LANGUAGES,
+        "category": CATEGORIES,
+        "image": 1,
+    }
+
     async with httpx.AsyncClient(timeout=15) as client:
-        response = await client.get(LATEST_URL, params={"apikey": api_key, "language": "en"})
+        response = await client.get(LATEST_URL, params=params)
         response.raise_for_status()
         data = response.json()
 

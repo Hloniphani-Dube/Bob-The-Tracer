@@ -1,8 +1,12 @@
 import type { NewsArticle, NewsVerdict } from '../types/news'
 
-// Defaults to the backend's local dev port; override with VITE_API_BASE_URL
-// if the backend runs somewhere else.
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? 'http://localhost:8000'
+// Local dev defaults to the backend's own dev port, since it runs as a
+// separate process there. A production build defaults to a relative path
+// instead, since Vercel serves the frontend and the backend service from
+// the same domain (see vercel.json's /api rewrite). VITE_API_BASE_URL
+// overrides either default if the backend ever runs somewhere else.
+const API_BASE_URL =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? (import.meta.env.DEV ? 'http://localhost:8000' : '')
 
 export async function fetchNews(): Promise<NewsArticle[]> {
   const res = await fetch(`${API_BASE_URL}/api/news`)

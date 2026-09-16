@@ -9,7 +9,6 @@
   <img alt="React" src="https://img.shields.io/badge/frontend-React%20%2B%20TypeScript-111111?style=flat-square">
   <img alt="FastAPI" src="https://img.shields.io/badge/backend-FastAPI-111111?style=flat-square">
   <img alt="Gemini" src="https://img.shields.io/badge/AI-Gemini-111111?style=flat-square">
-  <img alt="Status" src="https://img.shields.io/badge/status-in%20progress-111111?style=flat-square">
 </p>
 
 TRACE investigates a claim across real sources instead of answering true or false. It maps what supports a claim and what contradicts it, tracks how the claim's meaning drifted as it spread, and shows exactly how the evidence adds up to a five state verdict.
@@ -82,11 +81,11 @@ flowchart LR
     AI --> UI
 ```
 
-Both API keys stay on the backend, in a `.env` file that is never sent to or read by the browser. The investigation page above still runs on a static mock fixture; the News page and its verdicts are the real backend integration so far.
+Both API keys stay on the backend, whether that is a local `.env` file or Vercel environment variables, and are never sent to or read by the browser. The investigation page above still runs on a static mock fixture; the News page and its verdicts are the real backend integration so far.
 
 ## Run it locally
 
-TRACE is meant to be run on your own machine with your own keys, not shared as a hosted service.
+TRACE is meant to be run with your own keys, whether that is on your own machine or your own Vercel deployment, rather than shared as one hosted instance with one person's key exposed to everyone.
 
 ### 1. Backend
 
@@ -121,6 +120,24 @@ npm run dev
 ```
 
 The frontend talks to the backend at `http://localhost:8000` by default; set `VITE_API_BASE_URL` if it runs somewhere else. The landing and investigation pages need no backend at all, since they run entirely on the mock investigation.
+
+## Deploy to Vercel
+
+[vercel.json](vercel.json) deploys the frontend and the backend as two services in one project, on one domain: everything under `/api` routes to the FastAPI backend, everything else routes to the built frontend. No separate backend host is needed.
+
+```
+npx vercel
+```
+
+Link it to a new or existing project, then set the same three variables from `backend/.env.example` under Project Settings, Environment Variables:
+
+```
+NEWSDATA_API_KEY
+GEMINI_API_KEY
+GEMINI_MODEL
+```
+
+Deploy again (`npx vercel --prod`) once they are set, since a deployment only reads the environment variables that exist at build time. `npx vercel dev` runs both services together locally the same way, if you would rather test the production wiring than run the two dev servers from the steps above by hand.
 
 ## Stack
 
