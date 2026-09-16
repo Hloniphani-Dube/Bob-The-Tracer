@@ -47,3 +47,19 @@ def get_verdict(body: VerdictRequest):
     except Exception as exc:
         logger.exception("verdict failed")
         raise HTTPException(status_code=502, detail="Could not get a verdict right now.") from exc
+
+
+class InvestigateRequest(BaseModel):
+    claim: str
+
+
+@app.post("/api/investigate")
+def post_investigate(body: InvestigateRequest):
+    claim = body.claim.strip()
+    if not claim:
+        raise HTTPException(status_code=400, detail="A claim is required.")
+    try:
+        return gemini.investigate(claim)
+    except Exception as exc:
+        logger.exception("investigation failed")
+        raise HTTPException(status_code=502, detail="Could not investigate that claim right now.") from exc

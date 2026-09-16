@@ -1,3 +1,4 @@
+import type { Investigation } from '../types/investigation'
 import type { NewsArticle, NewsVerdict } from '../types/news'
 
 // Local dev defaults to the backend's own dev port, since it runs as a
@@ -22,5 +23,15 @@ export async function fetchVerdict(article: Pick<NewsArticle, 'title' | 'descrip
     body: JSON.stringify(article),
   })
   if (!res.ok) throw new Error('Could not get a verdict right now.')
+  return res.json()
+}
+
+export async function fetchInvestigation(claim: string): Promise<Investigation> {
+  const res = await fetch(`${API_BASE_URL}/api/investigate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ claim }),
+  })
+  if (!res.ok) throw new Error('Could not investigate that claim right now.')
   return res.json()
 }

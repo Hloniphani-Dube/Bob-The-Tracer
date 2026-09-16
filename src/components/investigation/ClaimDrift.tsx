@@ -13,6 +13,10 @@ interface ClaimDriftProps {
 export function ClaimDrift({ steps }: ClaimDriftProps) {
   const anyDrift = steps.some((s) => s.changedPhrase)
 
+  if (steps.length === 0) {
+    return <p className="text-sm text-pencil">No clear original source was found to compare this claim against.</p>
+  }
+
   return (
     <div>
       <div className="flex flex-col items-stretch gap-3 lg:flex-row lg:items-center">

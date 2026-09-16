@@ -22,7 +22,9 @@ export function HistoryPanel() {
             <li key={entry.id}>
               <button
                 type="button"
-                onClick={() => navigate('/investigate')}
+                onClick={() =>
+                  navigate('/investigate', entry.claim.startsWith('Screenshot: ') ? undefined : { state: { claim: entry.claim } })
+                }
                 className="cursor-pointer text-left hover:underline"
               >
                 {entry.claim}

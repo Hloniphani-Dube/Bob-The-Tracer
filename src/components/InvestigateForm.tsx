@@ -10,10 +10,10 @@ interface InvestigateFormProps {
   onSubmit?: () => void
 }
 
-// Pass 1 has no backend: whatever is submitted here routes straight to the
-// mock investigation, and an attached screenshot is only ever used for its
-// file name (no OCR yet). A later pass posts the claim text or image to
-// FastAPI instead and keeps this same form.
+// A typed claim is investigated for real: the backend calls Gemini with
+// grounded search and the investigation page fetches that result. A
+// screenshot has nowhere to go yet (no OCR route), so it still just lands
+// on the demo investigation instead of claiming to have read the image.
 export function InvestigateForm({ compact = false, onSubmit }: InvestigateFormProps) {
   const [value, setValue] = useState('')
   const [screenshot, setScreenshot] = useState<File | null>(null)
@@ -24,7 +24,11 @@ export function InvestigateForm({ compact = false, onSubmit }: InvestigateFormPr
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
     addEntry(screenshot ? `Screenshot: ${screenshot.name}` : value)
-    navigate('/investigate')
+    if (screenshot || !value.trim()) {
+      navigate('/investigate')
+    } else {
+      navigate('/investigate', { state: { claim: value.trim() } })
+    }
     onSubmit?.()
   }
 

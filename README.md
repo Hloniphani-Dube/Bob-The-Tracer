@@ -81,7 +81,7 @@ flowchart LR
     AI --> UI
 ```
 
-Both API keys stay on the backend, whether that is a local `.env` file or Vercel environment variables, and are never sent to or read by the browser. The investigation page above still runs on a static mock fixture; the News page and its verdicts are the real backend integration so far.
+Both API keys stay on the backend, whether that is a local `.env` file or Vercel environment variables, and are never sent to or read by the browser. Submitting a claim (text, not yet a URL or a screenshot) sends it to the backend, which asks Gemini to search for real sources and reason about them; landing on the investigation page with no claim, such as a direct link, shows a static demo instead.
 
 ## Run it locally
 
@@ -119,7 +119,7 @@ npm install
 npm run dev
 ```
 
-The frontend talks to the backend at `http://localhost:8000` by default; set `VITE_API_BASE_URL` if it runs somewhere else. The landing and investigation pages need no backend at all, since they run entirely on the mock investigation.
+The frontend talks to the backend at `http://localhost:8000` by default; set `VITE_API_BASE_URL` if it runs somewhere else. Investigating a claim, and the News page, both need the backend running with real keys; landing directly on the investigation page without one shows a static demo instead.
 
 ## Deploy to Vercel
 
