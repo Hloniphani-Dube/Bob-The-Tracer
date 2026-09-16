@@ -32,7 +32,12 @@ def _model() -> str:
 
 
 def _generate(prompt: str) -> str:
-    response = _client().models.generate_content(
+    # Keep the client bound to a variable rather than chaining the call
+    # straight off _client(): a known bug in google-genai closes the
+    # underlying httpx client while the request is still in flight when the
+    # Client is used as a temporary object instead of staying in scope.
+    client = _client()
+    response = client.models.generate_content(
         model=_model(),
         contents=prompt,
         config=types.GenerateContentConfig(tools=[types.Tool(google_search=types.GoogleSearch())]),
