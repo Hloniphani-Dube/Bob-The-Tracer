@@ -16,7 +16,7 @@ import type { Investigation } from '../types/investigation'
 type PageState =
   | { status: 'demo'; investigation: Investigation }
   | { status: 'loading'; claim: string }
-  | { status: 'error'; claim: string }
+  | { status: 'error'; claim: string; message: string }
   | { status: 'ready'; investigation: Investigation }
 
 // A claim arrives via navigation state (from the investigate form or a
@@ -36,8 +36,9 @@ export function InvestigationPage() {
     try {
       const investigation = await fetchInvestigation(targetClaim)
       if (!ignored()) setState({ status: 'ready', investigation })
-    } catch {
-      if (!ignored()) setState({ status: 'error', claim: targetClaim })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Could not investigate that claim right now.'
+      if (!ignored()) setState({ status: 'error', claim: targetClaim, message })
     }
   }, [])
 
@@ -85,8 +86,7 @@ export function InvestigationPage() {
           <p className="font-hand text-sm text-pencil">Claim</p>
           <h1 className="sketch-tilt mt-1 text-2xl font-semibold sm:text-3xl">{state.claim}</h1>
           <p className="mt-6" style={{ color: 'var(--verdict-contradicted)' }}>
-            Could not investigate that claim right now. Make sure the backend is running and
-            backend/.env has a valid GEMINI_API_KEY.
+            {state.message}
           </p>
           <div className="mt-4">
             <RoughButton

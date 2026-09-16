@@ -14,6 +14,19 @@ logger = logging.getLogger("trace")
 
 app = FastAPI(title="TRACE backend")
 
+
+def _gemini_error_response(exc: Exception) -> HTTPException:
+    """RuntimeError here is always one we raised ourselves for a missing key
+    (see gemini.py), so it is safe to echo verbatim: it never contains the
+    key's value, only which environment variable is unset. Anything else is
+    the Gemini call itself failing (bad key, unavailable model, grounding
+    not enabled for the key, quota, network) — the exception type and
+    message from google-genai describe the failure, not the credential, so
+    surfacing them here saves a trip to the Vercel function logs."""
+    if isinstance(exc, RuntimeError):
+        return HTTPException(status_code=500, detail=str(exc))
+    return HTTPException(status_code=502, detail=f"Gemini request failed: {type(exc).__name__}: {exc}"[:400])
+
 # No auth or cookies anywhere in this API, and it is meant to run locally /
 # self hosted, so a wide open CORS policy trades nothing away in exchange
 # for not having to keep it in sync with whatever port Vite picks.
@@ -46,7 +59,7 @@ def get_verdict(body: VerdictRequest):
         return gemini.quick_verdict(body.title, body.description, body.link)
     except Exception as exc:
         logger.exception("verdict failed")
-        raise HTTPException(status_code=502, detail="Could not get a verdict right now.") from exc
+        raise _gemini_error_response(exc) from exc
 
 
 class InvestigateRequest(BaseModel):
@@ -62,4 +75,4 @@ def post_investigate(body: InvestigateRequest):
         return gemini.investigate(claim)
     except Exception as exc:
         logger.exception("investigation failed")
-        raise HTTPException(status_code=502, detail="Could not investigate that claim right now.") from exc
+        raise _gemini_error_response(exc) from exc

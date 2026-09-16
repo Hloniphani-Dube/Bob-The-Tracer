@@ -5,7 +5,10 @@ import { NewsCard } from '../components/news/NewsCard'
 import { fetchNews } from '../lib/api'
 import type { NewsArticle } from '../types/news'
 
-type LoadState = { status: 'loading' } | { status: 'error' } | { status: 'done'; articles: NewsArticle[] }
+type LoadState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'done'; articles: NewsArticle[] }
 
 // Fetches once on mount rather than polling: each newsdata.io request costs
 // an API credit, so refreshing is a deliberate, manual action here.
@@ -16,8 +19,9 @@ export function NewsPage() {
     try {
       const articles = await fetchNews()
       if (!ignore()) setState({ status: 'done', articles })
-    } catch {
-      if (!ignore()) setState({ status: 'error' })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Could not load news right now.'
+      if (!ignore()) setState({ status: 'error', message })
     }
   }, [])
 
@@ -58,12 +62,7 @@ export function NewsPage() {
       <h1 className="font-hand text-3xl">News</h1>
 
       {state.status === 'loading' && <p className="text-pencil">Loading news...</p>}
-      {state.status === 'error' && (
-        <p style={{ color: 'var(--verdict-contradicted)' }}>
-          Could not load news right now. Make sure the backend is running and backend/.env has a valid
-          NEWSDATA_API_KEY.
-        </p>
-      )}
+      {state.status === 'error' && <p style={{ color: 'var(--verdict-contradicted)' }}>{state.message}</p>}
       {state.status === 'done' && state.articles.length === 0 && (
         <p className="text-pencil">No articles came back right now.</p>
       )}

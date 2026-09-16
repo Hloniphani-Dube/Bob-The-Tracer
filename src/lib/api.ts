@@ -9,9 +9,21 @@ import type { NewsArticle, NewsVerdict } from '../types/news'
 const API_BASE_URL =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? (import.meta.env.DEV ? 'http://localhost:8000' : '')
 
+// FastAPI's HTTPException responses carry the real reason in `detail` (see
+// backend/app/main.py); surfacing that instead of a fixed string is what
+// lets a config or upstream error show up directly in the UI.
+async function errorMessage(res: Response, fallback: string): Promise<string> {
+  try {
+    const body = await res.json()
+    return typeof body.detail === 'string' ? body.detail : fallback
+  } catch {
+    return fallback
+  }
+}
+
 export async function fetchNews(): Promise<NewsArticle[]> {
   const res = await fetch(`${API_BASE_URL}/api/news`)
-  if (!res.ok) throw new Error('Could not load news right now.')
+  if (!res.ok) throw new Error(await errorMessage(res, 'Could not load news right now.'))
   const data = await res.json()
   return data.articles
 }
@@ -22,7 +34,7 @@ export async function fetchVerdict(article: Pick<NewsArticle, 'title' | 'descrip
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(article),
   })
-  if (!res.ok) throw new Error('Could not get a verdict right now.')
+  if (!res.ok) throw new Error(await errorMessage(res, 'Could not get a verdict right now.'))
   return res.json()
 }
 
@@ -32,6 +44,6 @@ export async function fetchInvestigation(claim: string): Promise<Investigation> 
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ claim }),
   })
-  if (!res.ok) throw new Error('Could not investigate that claim right now.')
+  if (!res.ok) throw new Error(await errorMessage(res, 'Could not investigate that claim right now.'))
   return res.json()
 }

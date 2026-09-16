@@ -9,7 +9,11 @@ interface NewsCardProps {
   article: NewsArticle
 }
 
-type CheckState = { status: 'idle' } | { status: 'loading' } | { status: 'done'; result: NewsVerdict } | { status: 'error' }
+type CheckState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'done'; result: NewsVerdict }
+  | { status: 'error'; message: string }
 
 function formatDate(value: string | null) {
   if (!value) return null
@@ -30,8 +34,9 @@ export function NewsCard({ article }: NewsCardProps) {
     try {
       const result = await fetchVerdict(article)
       setCheck({ status: 'done', result })
-    } catch {
-      setCheck({ status: 'error' })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Could not get a verdict right now.'
+      setCheck({ status: 'error', message })
     }
   }
 
@@ -71,7 +76,7 @@ export function NewsCard({ article }: NewsCardProps) {
           {check.status === 'loading' && <p className="font-hand text-sm text-pencil">Investigating...</p>}
           {check.status === 'error' && (
             <p className="font-hand text-sm" style={{ color: 'var(--verdict-contradicted)' }}>
-              Could not get a verdict right now.
+              {check.message}
             </p>
           )}
           {check.status === 'done' && (
