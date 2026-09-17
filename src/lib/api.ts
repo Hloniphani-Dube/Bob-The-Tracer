@@ -1,4 +1,5 @@
 import type { Investigation } from '../types/investigation'
+import type { NewsRegion } from './newsRegions'
 import type { NewsArticle, NewsVerdict } from '../types/news'
 
 // Local dev defaults to the backend's own dev port, since it runs as a
@@ -21,8 +22,8 @@ async function errorMessage(res: Response, fallback: string): Promise<string> {
   }
 }
 
-export async function fetchNews(): Promise<NewsArticle[]> {
-  const res = await fetch(`${API_BASE_URL}/api/news`)
+export async function fetchNews(region: NewsRegion = 'all'): Promise<NewsArticle[]> {
+  const res = await fetch(`${API_BASE_URL}/api/news?region=${encodeURIComponent(region)}`)
   if (!res.ok) throw new Error(await errorMessage(res, 'Could not load news right now.'))
   const data = await res.json()
   return data.articles

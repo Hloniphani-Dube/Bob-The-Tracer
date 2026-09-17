@@ -9,6 +9,7 @@
   <img alt="React" src="https://img.shields.io/badge/frontend-React%20%2B%20TypeScript-111111?style=flat-square">
   <img alt="FastAPI" src="https://img.shields.io/badge/backend-FastAPI-111111?style=flat-square">
   <img alt="Gemini" src="https://img.shields.io/badge/AI-Gemini-111111?style=flat-square">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-111111?style=flat-square">
 </p>
 
 TRACE investigates a claim across real sources instead of answering true or false. It maps what supports a claim and what contradicts it, tracks how the claim's meaning drifted as it spread, and shows exactly how the evidence adds up to a five state verdict.
@@ -58,7 +59,7 @@ flowchart TD
 
 ## News
 
-The News page reads live articles through the backend, and an "Is this true" button on any article gets a real Gemini verdict, grounded with Google Search, right then.
+The News page reads live articles through the backend, and an "Is this true" button on any article gets a real Gemini verdict, grounded with Google Search, right then. A region selector filters the feed to South Africa, the United States, the United Kingdom, China, or all four, and wire stories that would otherwise show up once per outlet that ran them are deduplicated before they reach the page.
 
 <p align="center">
   <img src="docs/screenshots/news.png" alt="News feed with a resolved verdict" width="800">
@@ -146,3 +147,7 @@ React, TypeScript, Vite, Tailwind CSS, Framer Motion, React Flow (`@xyflow/react
 ## Design
 
 The whole interface is meant to feel hand drawn rather than corporate: black and white, hand drawn shapes via `roughjs`, a handwriting style display font for headings, and a mascot that shows up in the Ask dock instead of a generic bot icon. The five verdict colors are the one deliberate exception to the black and white rule, used only as small functional accents so severity stays scannable at a glance.
+
+## License
+
+MIT, see [LICENSE](LICENSE).

@@ -54,9 +54,9 @@ app.add_middleware(
 
 
 @app.get("/api/news")
-async def get_news():
+async def get_news(region: str = "all"):
     try:
-        return {"articles": await newsdata.fetch_latest()}
+        return {"articles": await newsdata.fetch_latest(region)}
     except Exception as exc:
         logger.exception("news fetch failed")
         raise HTTPException(status_code=502, detail="Could not load news right now.") from exc
