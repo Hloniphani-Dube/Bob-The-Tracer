@@ -15,6 +15,10 @@
 TRACE investigates a claim across real sources instead of answering true or false. It maps what supports a claim and what contradicts it, tracks how the claim's meaning drifted as it spread, and shows exactly how the evidence adds up to a five state verdict.
 
 <p align="center">
+  <video src="docs/video/TRACE-demo.mp4" controls width="800">Your browser does not support inline video. Download the demo at docs/video/TRACE-demo.mp4.</video>
+</p>
+
+<p align="center">
   <img src="docs/screenshots/landing.png" alt="TRACE landing page" width="800">
 </p>
 
